@@ -8,7 +8,7 @@ This script implements HIBP API V3.
 
 ## Installation
 
-To install this module type the following:
+To run `pwncheck`, first install the required dependencies
 
     cpanm --quiet --installdeps --notest .
 
