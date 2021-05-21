@@ -1,0 +1,11 @@
+*.sw*
+tmp
+cover_db
+MYMETA.JSON
+MYMETA.yml
+pm_to_blib
+blib
+perldb.out
+scripts/
+Makefile.old
+Makefile

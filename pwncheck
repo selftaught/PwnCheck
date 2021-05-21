@@ -1,0 +1,131 @@
+#!/usr/bin/env perl
+
+package PwnCheck;
+
+use strict;
+use warnings;
+use feature qw(say);
+
+use FindBin qw($Bin);
+use lib "$Bin/lib";
+
+use HIBP::V3;
+use Getopt::Long;
+use JSON;
+
+our $VERSION = '0.0.1';
+
+sub help {
+    say q{
+NAME
+
+    pwncheck
+
+DESCRIPTION
+
+    Check for account or password pwnage.
+
+SYNOPSIS
+
+    pwncheck [...option] [...value]
+
+OPTIONS
+
+    -h, --help
+    -d, --data-classes                      prints out a list of data classes
+    -p, --password-status       <password>  checks if the password has been pwned
+    -ab, --account-breaches     <account>   print a list of breaches found for the account
+    -ap, --account-pastes       <account>   print a list of pastes found for the account
+    -bs, --breached-site        <site>      print breach details about a specific site
+    -bS, --breached-sites                   print a list of all known site breaches
+
+};
+    exit;
+}
+
+sub pwncheck {
+    return shift->{'__pwncheck'} ||= do {
+        return HIBP::V3->new;
+    };
+}
+
+sub get_opts {
+    my $self = shift;
+
+    GetOptions(
+        'h|help'                => sub { &help },
+        'd|data-classes'        => \$self->{'data-classes'},
+        'p|password-status=s'   => \$self->{'password-status'},
+        'ab|account-breaches=s' => \$self->{'account-breaches'},
+        'ap|account-pastes=s'   => \$self->{'account-pastes'},
+        'bs|breached-site=s'    => \$self->{'breached-site'},
+        'bS|breached-sites'     => \$self->{'breached-sites'},
+        'v|verbose'             => \$self->{'verbose'},
+    );
+}
+
+sub new {
+    my $blessed = bless {}, shift;
+    $blessed->get_opts;
+    return $blessed;
+}
+
+sub run {
+    my $self = shift;
+
+    $self->get_password_status if $self->{'password-status'};
+    $self->get_data_classes if $self->{'data-classes'};
+    $self->get_account_breaches if $self->{'account-breaches'};
+    $self->get_account_pastes if $self->{'account-pastes'};
+    $self->get_breached_site if $self->{'breached-site'};
+    $self->get_breached_sites if $self->{'breached-sites'};
+}
+
+sub get_password_status {
+    my $self = shift;
+    my $pwncheck = $self->pwncheck;
+    say encode_json $pwncheck->get_password_status(
+        $self->{'password-status'},
+    );
+}
+
+sub get_account_breaches {
+    my $self = shift;
+    my $pwncheck = $self->pwncheck;
+    $DB::single = 1;
+    say $pwncheck->get_account_breaches(
+        $self->{'account-breaches'},
+    );
+}
+
+sub get_account_pastes {
+    my $self = shift;
+    my $pwncheck = $self->pwncheck;
+    say $pwncheck->get_account_pastes(
+        $self->{'account-pastes'},
+    );
+}
+
+sub get_data_classes {
+    my $self = shift;
+    my $pwncheck = $self->pwncheck;
+    say $pwncheck->get_data_classes;
+}
+
+sub get_breached_sites {
+    my $self = shift;
+    my $pwncheck = $self->pwncheck;
+    say $pwncheck->get_breached_sites;
+}
+
+sub get_breached_site {
+    my $self = shift;
+    say $self->pwncheck->get_breached_site(
+        $self->{'breached-site'},
+    );
+}
+
+1;
+
+PwnCheck->new->run;
+exit;
