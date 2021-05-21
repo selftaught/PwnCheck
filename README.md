@@ -22,7 +22,6 @@ To install this module type the following:
     -bs, --breached-site     <site>      print breach details about a specific site
     -bS, --breached-sites                print a list of all known site breaches
 
-
 ## Examples
 
     ./pwncheck --help
@@ -44,7 +43,6 @@ Build the docker image:
 
 Run the image
 ```docker run -it pwncheck ./pwncheck -h```
-
 
 ## Development
 
