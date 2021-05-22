@@ -92,7 +92,6 @@ sub get_password_status {
 sub get_account_breaches {
     my $self = shift;
     my $pwncheck = $self->pwncheck;
-    $DB::single = 1;
     say $pwncheck->get_account_breaches(
         $self->{'account-breaches'},
     );
