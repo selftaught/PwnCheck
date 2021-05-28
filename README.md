@@ -42,7 +42,7 @@ Build the docker image:
 ```docker build -t pwncheck .```
 
 Run the image
-```docker run -it pwncheck ./pwncheck -h```
+```docker run -it --rm -e HIBP_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx pwncheck -h```
 
 ## Development
 
