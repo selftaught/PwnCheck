@@ -11,10 +11,6 @@ matrix:
       env: COVERAGE=1   # enables coverage reporting (coveralls by default),
                         # or COVERAGE=report_name to use a specific report
                         # module
-    - perl: 5.20
-      env: COVERAGE=1   # enables coverage reporting (coveralls by default),
-                        # or COVERAGE=report_name to use a specific report
-                        # module
   allow_failures:
     - perl: blead       # ignore failures for blead perl
 before_install:
