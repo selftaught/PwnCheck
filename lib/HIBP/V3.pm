@@ -1,5 +1,6 @@
 package HIBP::V3;
 
+use v5.18.4;
 use strict;
 use warnings;
 use feature 'say';
