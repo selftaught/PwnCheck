@@ -12,16 +12,6 @@ To run `pwncheck`, first install the required dependencies
 
     cpanm --quiet --installdeps --notest .
 
-## **Options**
-
-     -h, --help
-     -d, --data-classes                  prints out a list of data classes
-     -p, --password-status   <str>      checks if the password has been pwned
-    -ab, --account-breaches  <str>      print a list of breaches found for the account
-    -ap, --account-pastes    <str>      print a list of pastes found for the account
-    -bs, --breached-site     <str>      print breach details about a specific site
-    -bS, --breached-sites    <str>      print a list of all known site breaches
-
 ## **Usage**
 
 ### **Getting help from CLI**
@@ -31,7 +21,7 @@ To run `pwncheck`, first install the required dependencies
 ### **Password(s) check**
 
     ./pwncheck --password-status password
-    ./pwncheck --password-status password1,password2,password3
+    ./pwncheck --password-status password1,password2,password3,"passwor,d4"
     ./pwncheck --password-status https://pastebin.com/raw/Jx5X0xi2
 
 ### **Breached Site(s) check**
@@ -56,11 +46,13 @@ To run `pwncheck`, first install the required dependencies
     ./pwncheck --data-classes
 
 ## Environment variables
+
  - `HIBP_API_KEY` required for some HIBP API endpoints
  - `JSON` set this env var to `1` to format output as JSON
  - `YAML` set this env var to `1` to format output as YAML
  - `PRETTY` set this env var to `1` to print output in pretty format
  - `RAW` set this env var to `1` to print output in raw format
+  
 ## Running in Docker
 
 ```
