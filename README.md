@@ -1,56 +1,91 @@
 # PwnCheck
 
 PwnCheck is a command line utility for querying Have I Been Pwned's
-API to determine if an email address or a password has been pwned. 
+API to determine if an email addresses or passwords have been pwned. 
 This script implements HIBP API V3.
 
 [![Build Status](https://travis-ci.com/selftaught/PwnCheck.svg?token=Tx7EAKup6EXJbMTwywxS&branch=main)](https://travis-ci.com/selftaught/PwnCheck)
 
-## Installation
+## **Installation**
 
 To run `pwncheck`, first install the required dependencies
 
     cpanm --quiet --installdeps --notest .
 
-## Options
+## **Options**
 
      -h, --help
      -d, --data-classes                  prints out a list of data classes
-     -p, --password-status   <password>  checks if the password has been pwned
-    -ab, --account-breaches  <account>   print a list of breaches found for the account
-    -ap, --account-pastes    <account>   print a list of pastes found for the account
-    -bs, --breached-site     <site>      print breach details about a specific site
-    -bS, --breached-sites                print a list of all known site breaches
+     -p, --password-status   <str>      checks if the password has been pwned
+    -ab, --account-breaches  <str>      print a list of breaches found for the account
+    -ap, --account-pastes    <str>      print a list of pastes found for the account
+    -bs, --breached-site     <str>      print breach details about a specific site
+    -bS, --breached-sites    <str>      print a list of all known site breaches
 
-## Examples
+## **Usage**
+
+### **Getting help from CLI**
 
     ./pwncheck --help
-    ./pwncheck --password-status  passw0rd
-    ./pwncheck --breached-site    adobe
-    ./pwncheck --pastes           your@email.com
-    ./pwncheck --breaches         your@email.com
-    ./pwncheck --breached-sites
+
+### **Password(s) check**
+
+    ./pwncheck --password-status password
+    ./pwncheck --password-status password1,password2,password3
+    ./pwncheck --password-status https://pastebin.com/raw/Jx5X0xi2
+
+### **Breached Site(s) check**
+
+    ./pwncheck --breached-site adobe
+    ./pwncheck --breached-site adobe,facebook
+
+### **Paste(s) check**
+
+    ./pwncheck --pastes selftaught@example.com
+    ./pwncheck --pastes selftaught@example.com,dillan@example.com
+    ./pwncheck --pastes https://pastebin.com/raw/1Zb807f5 
+
+### **Breached account(s) check**
+
+    ./pwncheck --breaches selftaught@example.com
+    ./pwncheck --breaches selftaught@example.com,dillan@example.com
+    ./pwncheck --breaches https://pastebin.com/raw/1Zb807f5
+
+### **Get a list of HIBP data classes**
+
     ./pwncheck --data-classes
 
-## HIBP API key
+## Environment variables
+ - `HIBP_API_KEY` required for some HIBP API endpoints
+ - `JSON` set this env var to `1` to format output as JSON
+ - `YAML` set this env var to `1` to format output as YAML
+ - `PRETTY` set this env var to `1` to print output in pretty format
+ - `RAW` set this env var to `1` to print output in raw format
+## Running in Docker
 
-Some of the HIBP API endpoints require an API key. You can set this with the env var `HIBP_API_KEY=...`.
+```
+docker build -t pwncheck .
+docker run -it pwncheck ./pwncheck --help
+```
 
-## Running with Docker
+## Contributing
 
-Build the docker image:
-```docker build -t pwncheck .```
+1. Fork it
+2. Create feature branch (`git checkout -b feature/adding-x-and-y`)
+3. Make some changes...
+4. Commit changes (`git commit -m '...'`)
+5. Push changes to remote feature branch (`git push origin feature/adding-x-and-y`)
+6. Create PR when feature branch is ready to merge
 
-Run the image
-```docker run -it pwncheck ./pwncheck -h```
 
-## Development
+## License 
 
-### Branching
+    The MIT License (MIT)
 
-`git checkout main && git pull && git checkout -b feature`
+    Copyright (C) 2021 by Dillan Hildebrand
 
-### Unit tests
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-`prove -v ./t`
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
