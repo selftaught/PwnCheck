@@ -43,25 +43,34 @@ sub api_endpoint_builder {
 }
 
 sub get_account_breaches {
-    return shift->__get_helper('/breachedaccount/' . shift || die "account arg was not provided!");
+    my $self = shift;
+    my $acct = shift or die "account arg was not provided!";
+
+    return $self->hibp_api_call("/breachedaccount/$acct");
 }
 
 sub get_breached_sites {
-    return shift->__get_helper('/breaches');
+    my $self = shift;
+
+    return $self->hibp_api_call('/breaches');
 }
 
 sub get_breached_site {
     my $self = shift;
     my $site = shift or die "Missing required site arg!";
-    return $self->__get_helper("/breach/$site");
+
+    return $self->hibp_api_call("/breach/$site");
 }
 
 sub get_data_classes {
-    return shift->__get_helper('/dataclasses');
+    return shift->hibp_api_call('/dataclasses');
 }
 
 sub get_account_pastes {
-    return shift->__get_helper("/pasteaccount/" . shift || die "account arg was not provided!");
+    my $self = shift;
+    my $acct = shift or die "account arg was not provided!";
+
+    return $self->hibp_api_call("/pasteaccount/$acct");
 }
 
 sub get_password_status {
@@ -71,16 +80,25 @@ sub get_password_status {
         die "password param cant be undefined!\n";
     }
 
+    if (ref $password eq 'ARRAY') {
+        my $resp = {};
+        foreach my $pass (@{$password}) {
+            $resp->{$pass} = $self->get_password_status($pass);
+        }
+        return $resp;
+    }
+
     my $sha1 = sha1_hex($password);
     my $five = substr($sha1, 0, 5);
-    my $resp = $self->api_agent->get($self->api_endpoint_builder("/$five", 1))->{'content'};
+    my $endp = $self->api_endpoint_builder("/$five", 1);
+    my $resp = $self->api_agent->get($endp)->{'content'};
     my $hash = {
         status      => 'ok',
         occurrences => 0,
     };
 
     if (!defined $resp || !$resp) {
-        die "recv'd an empty response...";
+        die "malformed or empty response from api request";
     }
 
     my @hashes  = split /\n/, $resp;
@@ -97,7 +115,7 @@ sub get_password_status {
     return $hash;
 }
 
-sub __get_helper {
+sub hibp_api_call {
     my ($self, $endpoint) = @_;
     my $headers = {};
 

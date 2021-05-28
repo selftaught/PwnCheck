@@ -53,7 +53,7 @@ sub get_opts {
     my $self = shift;
 
     GetOptions(
-        'h|help'                 => sub { &help },
+        'h|help|?'               => sub { &help },
         'd|data-classes'         => \$self->{'data-classes'},
         'p|password-status=s@'   => \$self->{'password-status'},
         'ab|account-breaches=s@' => \$self->{'account-breaches'},

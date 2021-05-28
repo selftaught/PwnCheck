@@ -11,7 +11,7 @@ use lib "$Bin/../lib";
 
 use HIBP::V3;
 use Data::Dumper;
-use Test::More tests => 23;
+use Test::More tests => 25;
 
 sub new {
     return bless {}, shift;
@@ -20,9 +20,7 @@ sub new {
 sub run_tests {
     my $self = shift;
     foreach my $sub (keys %HIBPTests::) {
-        if ($sub =~ /^test_/) {
-            $self->$sub;
-        }
+        $self->$sub if $sub =~ /^test_/;
     }
 }
 
@@ -74,23 +72,38 @@ sub test_api_agent {
     isa_ok ((HIBP::V3->new)->api_agent, 'HTTP::Tiny', 'Got expected API agent module');
 }
 
-sub test_password_status {
-    my $self = shift;
-    my $hibp = HIBP::V3->new;
-    my @list = qw(
+sub _password_list {
+    return qw(
         password
         raspberry
         admin
         changeme
-    );
+    )
+}
+
+sub test_password_status_single {
+    my $self = shift;
+    my $hibp = HIBP::V3->new;
+    my @list = $self->_password_list;
 
     foreach my $password (@list) {
-        sleep 1.5; # is in place to prevent throttling during unit test runs
+        sleep 1.5; # is in place to prevent api throttling during unit test runs
         my $status = $hibp->get_password_status($password);
-        is ref $status, 'HASH', 'response from get_password_status is a hashref';
+        isa_ok $status, 'HASH';
         ok exists $status->{'status'}, 'status key exists in hashref response';
         is $status->{'status'}, 'compromised', "password $password publically known";
     }
+}
+
+sub test_password_status_multi {
+    my $self = shift;
+    my $hibp = HIBP::V3->new;
+    my @list = $self->_password_list;
+    my $resp = $hibp->get_password_status(\@list);
+    my @keys = keys %{$resp};
+
+    isa_ok $resp, 'HASH';
+    ok eq_array sort @keys, sort @list;
 }
 
 1;
