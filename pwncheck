@@ -12,6 +12,8 @@ use lib "$Bin/lib";
 use HIBP::V3;
 use Getopt::Long;
 use JSON;
+use HTTP::Tiny;
+use Data::Dump qw(dump);
 
 our $VERSION = '0.0.1';
 
@@ -53,14 +55,14 @@ sub get_opts {
     my $self = shift;
 
     GetOptions(
-        'h|help|?'               => sub { &help },
-        'd|data-classes'         => \$self->{'data-classes'},
-        'p|password-status=s@'   => \$self->{'password-status'},
-        'ab|account-breaches=s@' => \$self->{'account-breaches'},
-        'ap|account-pastes=s@'   => \$self->{'account-pastes'},
-        'bs|breached-site=s@'    => \$self->{'breached-site'},
-        'bS|breached-sites'      => \$self->{'breached-sites'},
-        'v|verbose'              => \$self->{'verbose'},
+        'h|help|?'              => sub { &help },
+        'd|data-classes'        => \$self->{'data-classes'},
+        'p|password-status=s'   => \$self->{'password-status'},
+        'ab|account-breaches=s' => \$self->{'account-breaches'},
+        'ap|account-pastes=s'   => \$self->{'account-pastes'},
+        'bs|breached-site=s'    => \$self->{'breached-site'},
+        'bS|breached-sites'     => \$self->{'breached-sites'},
+        'v|verbose'             => \$self->{'verbose'},
     );
 }
 
@@ -81,25 +83,66 @@ sub run {
     $self->get_breached_sites if $self->{'breached-sites'};
 }
 
+sub http {
+    return shift->{'__http'} //= do {
+        HTTP::Tiny->new;
+    };
+}
+
+sub multi_val {
+    my $self = shift;
+    my $val  = shift;
+    my $resp = $val;
+
+    if ($val =~ m{^https://}) {
+        my $url = $val;
+        my $head = $self->http->head($val);
+        my $ctype = $head->{'headers'}->{'content-type'} // 0;
+        my $status = $head->{'status'};
+
+        if ($ctype =~ m{^text/plain;} && $status == 200) {
+            my $get = $self->http->get($url)->{'content'} // '';
+            $get =~ s/\r//g;
+            my @vals = split /\n/, $get;
+            return \@vals;
+        }
+    }
+    elsif (-f $val) {
+        my @vals = ();
+        open my $fh, '<', $val or die "$!\n";
+        while (my $line = <$fh>) {
+            chomp $line;
+            push @vals, $line;
+        }
+        close $fh;
+        return \@vals;
+    }
+
+    return $resp;
+}
+
 sub get_password_status {
     my $self = shift;
     my $pwncheck = $self->pwncheck;
-    say encode_json $pwncheck->get_password_status(
-        $self->{'password-status'},
-    );
+    my $password = $self->multi_val($self->{'password-status'});
+    my $status = $pwncheck->get_password_status($password);
+
+    say encode_json $status;
 }
 
 sub get_account_breaches {
     my $self = shift;
     my $pwncheck = $self->pwncheck;
-    say $pwncheck->get_account_breaches(
-        $self->{'account-breaches'},
-    );
+    my $account = $self->{'account-breaches'};
+    
+    say $pwncheck->get_account_breaches($account);
 }
 
 sub get_account_pastes {
     my $self = shift;
     my $pwncheck = $self->pwncheck;
+    my $account = $self->{'account-pastes'};
+
     say $pwncheck->get_account_pastes(
         $self->{'account-pastes'},
     );
@@ -108,17 +151,20 @@ sub get_account_pastes {
 sub get_data_classes {
     my $self = shift;
     my $pwncheck = $self->pwncheck;
+
     say $pwncheck->get_data_classes;
 }
 
 sub get_breached_sites {
     my $self = shift;
     my $pwncheck = $self->pwncheck;
+
     say $pwncheck->get_breached_sites;
 }
 
 sub get_breached_site {
     my $self = shift;
+
     say $self->pwncheck->get_breached_site(
         $self->{'breached-site'},
     );
