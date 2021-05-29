@@ -91,7 +91,7 @@ sub test_password_status_single {
         my $status = $hibp->get_password_status($password);
         isa_ok $status, 'HASH';
         ok exists $status->{'status'}, 'status key exists in hashref response';
-        is $status->{'status'}, 'compromised', "password $password publically known";
+        is $status->{'status'}, 'compromised', "password $password publicly known";
     }
 }
 

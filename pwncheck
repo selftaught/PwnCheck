@@ -144,9 +144,7 @@ sub get_account_pastes {
     my $pwncheck = $self->pwncheck;
     my $account = $self->{'account-pastes'};
 
-    say $pwncheck->get_account_pastes(
-        $self->{'account-pastes'},
-    );
+    say $pwncheck->get_account_pastes($account);
 }
 
 sub get_data_classes {
@@ -158,6 +156,7 @@ sub get_data_classes {
 
 sub get_breached_sites {
     my $self = shift;
+    my $filter = shift // '';
     my $pwncheck = $self->pwncheck;
 
     say $pwncheck->get_breached_sites;
