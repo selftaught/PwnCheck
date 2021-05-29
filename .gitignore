@@ -9,3 +9,4 @@ perldb.out
 scripts/
 Makefile.old
 Makefile
+.idea
