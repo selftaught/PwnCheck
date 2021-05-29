@@ -21,7 +21,7 @@ To run `pwncheck`, first install the required dependencies
 ### **Password(s) check**
 
     ./pwncheck --password-status password
-    ./pwncheck --password-status password1,password2,password3,"passwor,d4"
+    ./pwncheck --password-status /home/dillan/documents/passwords.txt
     ./pwncheck --password-status https://pastebin.com/raw/Jx5X0xi2
 
 ### **Breached Site(s) check**
@@ -33,6 +33,7 @@ To run `pwncheck`, first install the required dependencies
 
     ./pwncheck --pastes selftaught@example.com
     ./pwncheck --pastes selftaught@example.com,dillan@example.com
+    ./pwncheck --pastes /home/dillan/documents/emails.txt
     ./pwncheck --pastes https://pastebin.com/raw/1Zb807f5 
 
 ### **Breached account(s) check**
