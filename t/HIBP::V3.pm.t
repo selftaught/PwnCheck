@@ -10,8 +10,10 @@ use FindBin qw($Bin);
 use lib "$Bin/../lib";
 
 use HIBP::V3;
-use Data::Dumper;
-use Test::More tests => 25;
+use Data::Dump qw(dump);
+use Test::More tests => 29;
+use JSON;
+
 
 sub new {
     return bless {}, shift;
@@ -89,9 +91,9 @@ sub test_password_status_single {
     foreach my $password (@list) {
         sleep 1.5; # is in place to prevent api throttling during unit test runs
         my $status = $hibp->get_password_status($password);
-        isa_ok $status, 'HASH';
-        ok exists $status->{'status'}, 'status key exists in hashref response';
-        is $status->{'status'}, 'compromised', "password $password publicly known";
+        isa_ok $status, "HASH", "single pw status resp for '$password'";
+        ok exists $status->{'status'}, "single pw status resp for '$password'";
+        is $status->{'status'}, 'compromised', "password '$password' publicly known";
     }
 }
 
@@ -102,8 +104,37 @@ sub test_password_status_multi {
     my $resp = $hibp->get_password_status(\@list);
     my @keys = keys %{$resp};
 
-    isa_ok $resp, 'HASH';
-    ok eq_array sort @keys, sort @list;
+    isa_ok $resp, 'HASH', 'multi pw status resp';
+    ok eq_array sort @keys, sort @list, 'multi pw status resp';
+}
+
+sub _account_list {
+    return qw(
+        example@example.com
+        test@example.com
+    )
+}
+
+sub test_account_paste_single {
+    my $self = shift;
+    my $hibp = HIBP::V3->new;
+    my @list = $self->_account_list;
+
+    foreach my $account (@list) {
+        my $resp = decode_json $hibp->get_account_pastes($account);
+        isa_ok $resp, 'ARRAY', 'single account paste resp';
+    }
+}
+
+sub test_account_paste_multi {
+    my $self = shift;
+    my $hibp = HIBP::V3->new;
+    my @list = $self->_account_list;
+    my $resp = $hibp->get_account_pastes(\@list);
+    my @keys = keys %{$resp};
+
+    ok eq_array sort @keys, sort @list, 'multi account paste resp';
+    isa_ok $resp, 'HASH', 'multi account paste resp';
 }
 
 1;

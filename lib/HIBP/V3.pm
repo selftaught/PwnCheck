@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use feature 'say';
 
-use Data::Dumper;
+use Data::Dump qw(dump);
 use Digest::SHA1 qw(sha1_hex);
 use HTTP::Tiny;
 use JSON;
@@ -85,13 +85,13 @@ sub get_account_pastes {
 sub get_password_status {
     my $self = shift;
     my $pass = shift;
-    my $resp = {};
 
     if (!defined $pass || !$pass) {
         die "pass param cant be undefined!\n";
     }
 
     if (ref $pass eq 'ARRAY') {
+        my $resp = {};
         foreach my $pw (@{$pass}) {
             $resp->{$pw} = $self->get_password_status($pw);
         }
