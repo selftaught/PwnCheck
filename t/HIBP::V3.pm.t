@@ -10,7 +10,6 @@ use FindBin qw($Bin);
 use lib "$Bin/../lib";
 
 use HIBP::V3;
-use Data::Dump qw(dump);
 use Test::More tests => 29;
 use JSON;
 

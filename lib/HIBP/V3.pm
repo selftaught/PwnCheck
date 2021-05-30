@@ -5,7 +5,6 @@ use strict;
 use warnings;
 use feature 'say';
 
-use Data::Dump qw(dump);
 use Digest::SHA1 qw(sha1_hex);
 use HTTP::Tiny;
 use JSON;

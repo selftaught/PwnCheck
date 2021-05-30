@@ -14,7 +14,6 @@ use HIBP::V3;
 use Getopt::Long;
 use JSON;
 use HTTP::Tiny;
-use Data::Dump qw(dump);
 
 our $VERSION = '0.0.1';
 
