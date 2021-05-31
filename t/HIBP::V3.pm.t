@@ -11,6 +11,7 @@ use lib "$Bin/../lib";
 
 use HIBP::V3;
 use Test::More tests => 29;
+use Test::MockModule;
 use JSON;
 
 
@@ -118,22 +119,55 @@ sub test_account_paste_single {
     my $self = shift;
     my $hibp = HIBP::V3->new;
     my @list = $self->_account_list;
+    my $module = Test::MockModule->new('HIBP::V3');
+
+    $module->mock('call_api', sub {
+        my ($self, $endpoint) = @_;
+        return [
+            {
+                "Id"         => "Mocked Id",
+                "Source"     => "Mocked Source",
+                "Title"      => "Mocked title",
+                "Date"       => "2019-06-21T19:15:19Z",
+                "EmailCount" => 1
+            }
+        ]
+    });
 
     foreach my $account (@list) {
-        my $resp = decode_json $hibp->get_account_pastes($account);
+        my $resp = $hibp->get_account_pastes($account);
         isa_ok $resp, 'ARRAY', 'single account paste resp';
     }
+
+    $module->unmock('call_api');
 }
 
 sub test_account_paste_multi {
     my $self = shift;
     my $hibp = HIBP::V3->new;
     my @list = $self->_account_list;
+    my $module = Test::MockModule->new('HIBP::V3');
+
+    $module->mock('call_api', sub {
+        my ($self, $endpoint) = @_;
+        return [
+            {
+                "Id"         => "Mocked Id",
+                "Source"     => "Mocked Source",
+                "Title"      => "Mocked title",
+                "Date"       => "2019-06-21T19:15:19Z",
+                "EmailCount" => 1
+            }
+        ]
+    });
+    
     my $resp = $hibp->get_account_pastes(\@list);
     my @keys = keys %{$resp};
 
     ok eq_array sort @keys, sort @list, 'multi account paste resp';
     isa_ok $resp, 'HASH', 'multi account paste resp';
+    
+    $module->unmock('call_api');
 }
 
 1;
