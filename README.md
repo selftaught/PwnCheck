@@ -58,7 +58,7 @@ To run `pwncheck`, first install the required dependencies
 
 ```
 docker build -t pwncheck .
-docker run -it pwncheck ./pwncheck --help
+docker run -it --rm -e HIBP_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx pwncheck -h
 ```
 
 ## Contributing
@@ -69,7 +69,6 @@ docker run -it pwncheck ./pwncheck --help
 4. Commit changes (`git commit -m '...'`)
 5. Push changes to remote feature branch (`git push origin feature/adding-x-and-y`)
 6. Create PR when feature branch is ready to merge
-
 
 ## License 
 
