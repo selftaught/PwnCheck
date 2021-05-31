@@ -55,14 +55,14 @@ sub get_opts {
     my $self = shift;
 
     GetOptions(
-        'h|help|?'              => sub { &help },
-        'd|data-classes'        => \$self->{'data-classes'},
-        'p|password-status=s'   => \$self->{'password-status'},
-        'ab|account-breaches=s' => \$self->{'account-breaches'},
-        'ap|account-pastes=s'   => \$self->{'account-pastes'},
-        'bs|breached-site=s'    => \$self->{'breached-site'},
-        'bS|breached-sites'     => \$self->{'breached-sites'},
-        'v|verbose'             => \$self->{'verbose'},
+        'h|help|?'            => sub { &help },
+        'd|data-classes'      => \$self->{'data-classes'},
+        'p|password=s'        => \$self->{'password-status'},
+        'b|breaches=s'        => \$self->{'account-breaches'},
+        'P|pastes=s'          => \$self->{'account-pastes'},
+        'bs|breached-site=s'  => \$self->{'breached-site'},
+        'bS|breached-sites'   => \$self->{'breached-sites'},
+        'v|verbose'           => \$self->{'verbose'},
     );
 }
 

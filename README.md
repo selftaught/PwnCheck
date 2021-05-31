@@ -20,14 +20,17 @@ To run `pwncheck`, first install the required dependencies
 
 ### **Password(s) check**
 
-    ./pwncheck --password-status password
-    ./pwncheck --password-status /home/selftaught/documents/pass-list.txt
-    ./pwncheck --password-status https://pastebin.com/raw/Jx5X0xi2
+    ./pwncheck --password password
+    ./pwncheck --password /home/selftaught/documents/pass-list.txt
+    ./pwncheck --password https://pastebin.com/raw/Jx5X0xi2
 
-### **Breached Site(s) check**
+### **Breached Site check**
 
     ./pwncheck --breached-site adobe
-    ./pwncheck --breached-site adobe,facebook
+
+### **List Breached Sites**
+
+    ./pwncheck --breached-sites
 
 ### **Paste(s) check**
 
