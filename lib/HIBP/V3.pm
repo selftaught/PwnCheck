@@ -44,7 +44,7 @@ sub api_endpoint_builder {
 
 sub get_account_breaches {
     my $self = shift;
-    my $acct = shift or die "missing required account or account list";
+    my $acct = shift or die "missing required account arg!";
     my $resp = {};
 
     if (ref $acct eq 'ARRAY') {
@@ -54,7 +54,7 @@ sub get_account_breaches {
         return $resp;
     }
 
-    return $self->call_api("/breachedaccount/$acct");
+    return $self->call_api("/breachedaccount/$acct", 1);
 }
 
 sub get_breached_sites {
@@ -65,7 +65,7 @@ sub get_breached_sites {
 
 sub get_breached_site {
     my $self = shift;
-    my $site = shift or die "Missing required site arg!";
+    my $site = shift or die "missing required site arg!";
 
     return $self->call_api("/breach/$site");
 }
@@ -76,26 +76,22 @@ sub get_data_classes {
 
 sub get_account_pastes {
     my $self = shift;
-    my $acct = shift or die "account arg was not provided!";
+    my $acct = shift or die "missing required account arg!";
     my $resp = {};
 
     if (ref $acct eq 'ARRAY') {
         foreach (@{$acct}) {
-            $resp->{$_} = $self->call_api("/pasteaccount/$_");
+            $resp->{$_} = $self->call_api("/pasteaccount/$_", 1);
         }
         return $resp;
     }
 
-    return $self->call_api("/pasteaccount/$acct");
+    return $self->call_api("/pasteaccount/$acct", 1);
 }
 
 sub get_password_status {
     my $self = shift;
-    my $pass = shift;
-
-    if (!defined $pass || !$pass) {
-        die "pass param cant be undefined!\n";
-    }
+    my $pass = shift or die "missing required pass arg!";
 
     if (ref $pass eq 'ARRAY') {
         my $resp = {};
@@ -114,7 +110,7 @@ sub get_password_status {
         occurrences => 0,
     };
 
-    if (!defined $resp || !$resp) {
+    unless ($resp) {
         die "malformed or empty response from api request";
     }
 
@@ -133,16 +129,15 @@ sub get_password_status {
 }
 
 sub call_api {
-    my ($self, $endpoint) = @_;
-    my $headers = {};
-
-    if ($endpoint =~ /^\/(breachedaccount|pasteaccount)\//) {
-        $headers->{'hibp-api-key'} = $ENV{'HIBP_API_KEY'} // '';
-    }
+    my ($self, $endpoint, $needs_auth) = @_;
+    my $hdrs = {};
 
     my $resp_obj = $self->api_agent->get(
-        $self->api_endpoint_builder($endpoint),
-        { headers => $headers }
+        $self->api_endpoint_builder($endpoint), {
+            headers => {
+                ($needs_auth ? ('hibp-api-key' => $ENV{'HIBP_API_KEY'}) : ())
+            }
+        }
     );
 
     my $code = $resp_obj->{'status'};

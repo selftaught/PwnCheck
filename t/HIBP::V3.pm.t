@@ -10,9 +10,10 @@ use FindBin qw($Bin);
 use lib "$Bin/../lib";
 
 use HIBP::V3;
-use Test::More tests => 33;
+use Test::More tests => 37;
 use Test::MockModule;
 use JSON;
+use Data::Dump qw(dump);
 
 
 sub new {
@@ -108,6 +109,15 @@ sub test_password_status_multi {
     ok eq_array sort @keys, sort @list, 'multi pw status resp';
 }
 
+sub test_password_status_failure {
+    my $self = shift;
+    my $hibp = HIBP::V3->new;
+    
+    eval { $hibp->get_password_status() };
+
+    ok "$@" =~ 'missing required pass arg';
+}
+
 sub _account_list {
     return qw(
         example@example.com
@@ -120,19 +130,17 @@ sub test_account_paste_single {
     my $hibp = HIBP::V3->new;
     my @list = $self->_account_list;
     my $module = Test::MockModule->new('HIBP::V3');
+    my $mock_resp = [
+        {
+            "Id"         => "Mocked Id",
+            "Source"     => "Mocked Source",
+            "Title"      => "Mocked title",
+            "Date"       => "2019-06-21T19:15:19Z",
+            "EmailCount" => 1
+        }
+    ];
 
-    $module->mock('call_api', sub {
-        my ($self, $endpoint) = @_;
-        return [
-            {
-                "Id"         => "Mocked Id",
-                "Source"     => "Mocked Source",
-                "Title"      => "Mocked title",
-                "Date"       => "2019-06-21T19:15:19Z",
-                "EmailCount" => 1
-            }
-        ]
-    });
+    $module->mock('call_api', sub { $mock_resp });
 
     foreach my $account (@list) {
         my $resp = $hibp->get_account_pastes($account);
@@ -147,19 +155,17 @@ sub test_account_paste_multi {
     my $hibp = HIBP::V3->new;
     my @list = $self->_account_list;
     my $module = Test::MockModule->new('HIBP::V3');
+    my $mock_resp = [
+        {
+            "Id"         => "Mocked Id",
+            "Source"     => "Mocked Source",
+            "Title"      => "Mocked title",
+            "Date"       => "2019-06-21T19:15:19Z",
+            "EmailCount" => 1
+        }
+    ];
 
-    $module->mock('call_api', sub {
-        my ($self, $endpoint) = @_;
-        return [
-            {
-                "Id"         => "Mocked Id",
-                "Source"     => "Mocked Source",
-                "Title"      => "Mocked title",
-                "Date"       => "2019-06-21T19:15:19Z",
-                "EmailCount" => 1
-            }
-        ]
-    });
+    $module->mock('call_api', sub { $mock_resp });
     
     my $resp = $hibp->get_account_pastes(\@list);
     my @keys = keys %{$resp};
@@ -172,6 +178,12 @@ sub test_account_paste_multi {
 
 sub test_account_paste_failure {
     my $self = shift;
+    my $hibp = HIBP::V3->new;
+    my $module = Test::MockModule->new('HTTP::Tiny');
+    
+    eval { $hibp->get_account_pastes() };
+
+    ok "$@" =~ 'missing required account arg';
 }
 
 sub test_account_breaches_single {
@@ -179,11 +191,9 @@ sub test_account_breaches_single {
     my $hibp = HIBP::V3->new;
     my @list = $self->_account_list;
     my $module = Test::MockModule->new('HIBP::V3');
+    my $mock_resp = [{'Name' => 'Mocked breached name'}];
     
-    $module->mock('call_api', sub {
-        my ($self, $endpoint) = @_;
-        return [{"Name" => "Mocked breached name"}]
-    });
+    $module->mock('call_api', sub { $mock_resp });
 
     foreach my $account (@list) {
         my $resp = $hibp->get_account_breaches($account);
@@ -198,11 +208,9 @@ sub test_accout_breaches_multi {
     my $hibp = HIBP::V3->new;
     my @list = $self->_account_list;
     my $module = Test::MockModule->new('HIBP::V3');
+    my $mock_resp = [{'Name' => 'Mocked breached name'}];
     
-    $module->mock('call_api', sub {
-        my ($self, $endpoint) = @_;
-        return [{"Name" => "Mocked breached name"}]
-    });
+    $module->mock('call_api', sub { $mock_resp });
         
     my $resp = $hibp->get_account_breaches(\@list);
     my @keys = keys %{$resp};
@@ -211,6 +219,25 @@ sub test_accout_breaches_multi {
     isa_ok $resp, 'HASH', 'multi account paste resp';
 
     $module->unmock('call_api');
+}
+
+sub test_account_breaches_failure {
+    my $self = shift;
+    my $hibp = HIBP::V3->new;
+    my $module = Test::MockModule->new('HTTP::Tiny');
+    
+    eval { $hibp->get_account_breaches() };
+
+    ok "$@" =~ 'missing required account arg';
+}
+
+sub test_breached_site_failure {
+    my $self = shift;
+    my $hibp = HIBP::V3->new;
+    
+    eval { $hibp->get_breached_site() };
+
+    ok "$@" =~ 'missing required site arg';
 }
 
 1;
