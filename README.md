@@ -21,7 +21,7 @@ To run `pwncheck`, first install the required dependencies
 ### **Password(s) check**
 
     ./pwncheck --password-status password
-    ./pwncheck --password-status /home/dillan/documents/passwords.txt
+    ./pwncheck --password-status /home/selftaught/documents/passwords.txt
     ./pwncheck --password-status https://pastebin.com/raw/Jx5X0xi2
 
 ### **Breached Site(s) check**
@@ -31,16 +31,16 @@ To run `pwncheck`, first install the required dependencies
 
 ### **Paste(s) check**
 
-    ./pwncheck --pastes selftaught@example.com
-    ./pwncheck --pastes selftaught@example.com,dillan@example.com
-    ./pwncheck --pastes /home/dillan/documents/emails.txt
-    ./pwncheck --pastes https://pastebin.com/raw/1Zb807f5 
+    ./pwncheck --pastes test@example.com
+    ./pwncheck --pastes test@example.com,test2@example.com
+    ./pwncheck --pastes /home/selftaught/documents/emails.txt
+    ./pwncheck --pastes https://pastebin.com/raw/MxRcjuyW
 
 ### **Breached account(s) check**
 
-    ./pwncheck --breaches selftaught@example.com
-    ./pwncheck --breaches selftaught@example.com,dillan@example.com
-    ./pwncheck --breaches https://pastebin.com/raw/1Zb807f5
+    ./pwncheck --breaches test@example.com
+    ./pwncheck --breaches test@example.com,test2@example.com
+    ./pwncheck --breaches https://pastebin.com/raw/MxRcjuyW
 
 ### **Get a list of HIBP data classes**
 

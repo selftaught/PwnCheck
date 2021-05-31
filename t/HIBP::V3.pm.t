@@ -170,6 +170,44 @@ sub test_account_paste_multi {
     $module->unmock('call_api');
 }
 
+sub test_account_paste_failure {
+    my $self = shift;
+}
+
+sub test_account_breaches_single {
+    my $self = shift;
+    my $hibp = HIBP::V3->new;
+    my @list = $self->_account_list;
+    my $module = Test::MockModule->new('HIBP::V3');
+    
+    $module->mock('call_api', sub {
+        my ($self, $endpoint) = @_;
+        return [{"Name" => "Mocked breached name"}]
+    });
+
+    foreach my $account (@list) {
+        my $resp = $hibp->get_account_breaches($account);
+    }
+
+    $module->unmock('call_api');
+}
+
+sub test_accout_breaches_multi {
+    my $self = shift;
+    my $hibp = HIBP::V3->new;
+    my @list = $self->_account_list;
+    my $module = Test::MockModule->new('HIBP::V3');
+    
+    $module->mock('call_api', sub {
+        my ($self, $endpoint) = @_;
+        return [{"Name" => "Mocked breached name"}]
+    });
+        
+    my $resp = $hibp->get_account_breaches(\@list);
+
+    $module->unmock('call_api');
+}
+
 1;
 
 HIBPTests->new->run_tests;

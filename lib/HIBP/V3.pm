@@ -44,7 +44,15 @@ sub api_endpoint_builder {
 
 sub get_account_breaches {
     my $self = shift;
-    my $acct = shift or die "account arg was not provided!";
+    my $acct = shift or die "missing required account or account list";
+    my $resp = {};
+
+    if (ref $acct eq 'ARRAY') {
+        foreach (@{$acct}) {
+            $resp->{$_} = $self->call_api("/breachedaccount/$_");
+        }
+        return $resp;
+    }
 
     return $self->call_api("/breachedaccount/$acct");
 }
