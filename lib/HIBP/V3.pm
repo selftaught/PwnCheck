@@ -1,10 +1,10 @@
 package HIBP::V3;
 
+use v5.18.4;
 use strict;
 use warnings;
 use feature 'say';
 
-use Data::Dumper;
 use Digest::SHA1 qw(sha1_hex);
 use HTTP::Tiny;
 use JSON;
@@ -43,44 +43,75 @@ sub api_endpoint_builder {
 }
 
 sub get_account_breaches {
-    return shift->__get_helper('/breachedaccount/' . shift || die "account arg was not provided!");
+    my $self = shift;
+    my $acct = shift or die "missing required account arg!";
+    my $resp = {};
+
+    if (ref $acct eq 'ARRAY') {
+        foreach (@{$acct}) {
+            $resp->{$_} = $self->call_api("/breachedaccount/$_", 1);
+        }
+        return $resp;
+    }
+
+    return $self->call_api("/breachedaccount/$acct", 1);
 }
 
 sub get_breached_sites {
-    return shift->__get_helper('/breaches');
+    my $self = shift;
+
+    return $self->call_api('/breaches');
 }
 
 sub get_breached_site {
     my $self = shift;
-    my $site = shift or die "Missing required site arg!";
-    return $self->__get_helper("/breach/$site");
+    my $site = shift or die "missing required site arg!";
+
+    return $self->call_api("/breach/$site");
 }
 
 sub get_data_classes {
-    return shift->__get_helper('/dataclasses');
+    return shift->call_api('/dataclasses');
 }
 
 sub get_account_pastes {
-    return shift->__get_helper("/pasteaccount/" . shift || die "account arg was not provided!");
+    my $self = shift;
+    my $acct = shift or die "missing required account arg!";
+    my $resp = {};
+
+    if (ref $acct eq 'ARRAY') {
+        foreach (@{$acct}) {
+            $resp->{$_} = $self->call_api("/pasteaccount/$_", 1);
+        }
+        return $resp;
+    }
+
+    return $self->call_api("/pasteaccount/$acct", 1);
 }
 
 sub get_password_status {
-    my ($self, $password) = @_;
+    my $self = shift;
+    my $pass = shift or die "missing required pass arg!";
 
-    if (!defined $password || !$password) {
-        die "password param cant be undefined!\n";
+    if (ref $pass eq 'ARRAY') {
+        my $resp = {};
+        foreach my $pw (@{$pass}) {
+            $resp->{$pw} = $self->get_password_status($pw);
+        }
+        return $resp;
     }
 
-    my $sha1 = sha1_hex($password);
+    my $sha1 = sha1_hex($pass);
     my $five = substr($sha1, 0, 5);
-    my $resp = $self->api_agent->get($self->api_endpoint_builder("/$five", 1))->{'content'};
+    my $endp = $self->api_endpoint_builder("/$five", 1);
+    my $resp = $self->api_agent->get($endp)->{'content'};
     my $hash = {
         status      => 'ok',
         occurrences => 0,
     };
 
-    if (!defined $resp || !$resp) {
-        die "recv'd an empty response...";
+    unless ($resp) {
+        die "malformed or empty response from api request";
     }
 
     my @hashes  = split /\n/, $resp;
@@ -97,23 +128,20 @@ sub get_password_status {
     return $hash;
 }
 
-sub __get_helper {
-    my ($self, $endpoint) = @_;
-    my $headers = {};
-
-    if ($endpoint =~ /^\/(breachedaccount|pasteaccount)\//) {
-        $headers->{'hibp-api-key'} = $ENV{'HIBP_API_KEY'} // '';
-    }
+sub call_api {
+    my ($self, $endpoint, $needs_auth) = @_;
+    my $hdrs = {};
 
     my $resp_obj = $self->api_agent->get(
-        $self->api_endpoint_builder($endpoint),
-        { headers => $headers }
+        $self->api_endpoint_builder($endpoint), {
+            headers => {
+                ($needs_auth ? ('hibp-api-key' => $ENV{'HIBP_API_KEY'}) : ())
+            }
+        }
     );
 
     my $code = $resp_obj->{'status'};
     my $data = $resp_obj->{'content'};
-
-    $DB::single = 1;
 
     return '[]' if $endpoint =~ /^\/(pasteaccount)\// && $code == 404;
     return $data;

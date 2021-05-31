@@ -1,4 +1,4 @@
-use 5.014;
+use v5.18.4;
 use ExtUtils::MakeMaker;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
@@ -11,6 +11,7 @@ WriteMakefile(
         'Digest::SHA1'         => 2.13,
         'Throw'                => 0.13,
         'Getopt::Long'         => 2.5,
+        'Test::MockModule'     => 0.176,
     },
     ABSTRACT_FROM     => 'lib/HIBP/V3.pm', # retrieve abstract from module
     AUTHOR            => 'Dillan Hildebrand <dillan.hildebrand@protonmail.com>',

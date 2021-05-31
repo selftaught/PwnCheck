@@ -1,17 +1,12 @@
 language: perl
 perl:
-  - "5.14"            # builds perl 5.12.2 from source (pre-built not available)
-  - "5.20"              # installs latest perl 5.20 (if not already available)
+  - "5.18.4"              # installs latest perl 5.20 (if not already available)
 cache:
   directories:
     - $HOME/perl5
 matrix:
   include:
-    - perl: 5.14
-      env: COVERAGE=1   # enables coverage reporting (coveralls by default),
-                        # or COVERAGE=report_name to use a specific report
-                        # module
-    - perl: 5.20
+    - perl: 5.18.4
       env: COVERAGE=1   # enables coverage reporting (coveralls by default),
                         # or COVERAGE=report_name to use a specific report
                         # module
