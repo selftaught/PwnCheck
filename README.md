@@ -48,11 +48,7 @@ To run `pwncheck`, first install the required dependencies
 
 ## Environment variables
 
- - `HIBP_API_KEY` required for some HIBP API endpoints
- - `JSON` set this env var to `1` to format output as JSON
- - `YAML` set this env var to `1` to format output as YAML
- - `PRETTY` set this env var to `1` to print output in pretty format
- - `RAW` set this env var to `1` to print output in raw format
+ - `HIBP_API_KEY` - required for `--breaches` and `--pastes` options
   
 ## Running in Docker
 
