@@ -13,7 +13,6 @@ use HIBP::V3;
 use Test::More tests => 37;
 use Test::MockModule;
 use JSON;
-use Data::Dump qw(dump);
 
 
 sub new {
