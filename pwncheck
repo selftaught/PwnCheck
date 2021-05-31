@@ -89,7 +89,7 @@ sub http {
     };
 }
 
-sub multi_val {
+sub get_multi_val {
     my $self = shift;
     my $val  = shift;
     my $resp = $val;
@@ -124,7 +124,7 @@ sub multi_val {
 sub get_password_status {
     my $self = shift;
     my $pwncheck = $self->pwncheck;
-    my $password = $self->multi_val($self->{'password-status'});
+    my $password = $self->get_multi_val($self->{'password-status'});
     my $status = $pwncheck->get_password_status($password);
 
     say encode_json $status;
@@ -133,7 +133,7 @@ sub get_password_status {
 sub get_account_breaches {
     my $self = shift;
     my $pwncheck = $self->pwncheck;
-    my $account = $self->{'account-breaches'};
+    my $account = $self->get_multi_val($self->{'account-breaches'});
     
     say $pwncheck->get_account_breaches($account);
 }
@@ -141,7 +141,7 @@ sub get_account_breaches {
 sub get_account_pastes {
     my $self = shift;
     my $pwncheck = $self->pwncheck;
-    my $account = $self->{'account-pastes'};
+    my $account = $self->get_multi_val($self->{'account-pastes'});
 
     say $pwncheck->get_account_pastes($account);
 }
