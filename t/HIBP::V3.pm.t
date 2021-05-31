@@ -10,7 +10,7 @@ use FindBin qw($Bin);
 use lib "$Bin/../lib";
 
 use HIBP::V3;
-use Test::More tests => 29;
+use Test::More tests => 33;
 use Test::MockModule;
 use JSON;
 
@@ -187,6 +187,7 @@ sub test_account_breaches_single {
 
     foreach my $account (@list) {
         my $resp = $hibp->get_account_breaches($account);
+        isa_ok $resp, 'ARRAY', 'single account breach resp';
     }
 
     $module->unmock('call_api');
@@ -204,6 +205,10 @@ sub test_accout_breaches_multi {
     });
         
     my $resp = $hibp->get_account_breaches(\@list);
+    my @keys = keys %{$resp};
+    
+    ok eq_array sort @keys, sort @list, 'multi account paste resp';
+    isa_ok $resp, 'HASH', 'multi account paste resp';
 
     $module->unmock('call_api');
 }
