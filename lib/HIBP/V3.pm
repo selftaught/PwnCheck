@@ -49,7 +49,7 @@ sub get_account_breaches {
 
     if (ref $acct eq 'ARRAY') {
         foreach (@{$acct}) {
-            $resp->{$_} = $self->call_api("/breachedaccount/$_");
+            $resp->{$_} = $self->call_api("/breachedaccount/$_", 1);
         }
         return $resp;
     }
