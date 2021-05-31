@@ -63,7 +63,7 @@ docker run -it --rm -e HIBP_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx pwncheck -h
 3. Make some changes...
 4. Commit changes (`git commit -m '...'`)
 5. Push changes to remote feature branch (`git push origin feature/adding-x-and-y`)
-6. Create PR when feature branch is ready to merge
+6. Create PR when feature branch is ready for review
 
 ## License 
 
