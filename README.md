@@ -5,6 +5,13 @@ API to determine if an email addresses or passwords have been pwned.
 This script implements HIBP API V3.
 
 [![Build Status](https://travis-ci.com/selftaught/PwnCheck.svg?token=Tx7EAKup6EXJbMTwywxS&branch=main)](https://travis-ci.com/selftaught/PwnCheck)
+  
+## Running in Docker
+
+```
+docker build -t pwncheck .
+docker run -it --rm -e HIBP_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx pwncheck -h
+```
 
 ## **Installation**
 
@@ -51,13 +58,7 @@ To run `pwncheck`, first install the required dependencies
 ## Environment variables
 
  - `HIBP_API_KEY` - required for `--breaches` and `--pastes` options
-  
-## Running in Docker
 
-```
-docker build -t pwncheck .
-docker run -it --rm -e HIBP_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx pwncheck -h
-```
 
 ## Contributing
 
