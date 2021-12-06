@@ -1,7 +1,7 @@
 # PwnCheck
 
 PwnCheck is a command line utility for querying Have I Been Pwned's
-API to determine if an email addresses or passwords have been pwned. 
+API to determine if an email address or password has been pwned. 
 This script implements HIBP API V3.
 
 [![Build Status](https://travis-ci.com/selftaught/PwnCheck.svg?token=Tx7EAKup6EXJbMTwywxS&branch=main)](https://travis-ci.com/selftaught/PwnCheck)
